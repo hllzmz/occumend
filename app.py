@@ -281,6 +281,7 @@ def recommend():
 
 @app.route("/chat", methods=["POST"])
 def chat():
+    
     if not llm_client or not onet_collection:
         return (
             jsonify({"error": "Chat functionality is not configured on the server."}),
