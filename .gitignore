@@ -1,0 +1,21 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.venv/
+env/
+.env
+
+# Database files
+chroma_db/
+*.db
+*.sqlite3
+
+# IDE and OS specific files
+.idea/
+.vscode/
+*.DS_Store
