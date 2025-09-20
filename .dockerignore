@@ -1,21 +1,21 @@
-# Python'un cache dosyaları
+# Python cache files
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 
-# Sanal ortam klasörü
+# Virtual environment folders
 .venv
 venv/
 env/
 
-# IDE/Editör dosyaları
+# IDE/Editor files
 .vscode/
 .idea/
 
-# Tek seferlik script'ler (bunlara gerek yok)
+# One-time scripts (not needed)
 scripts/
 
-# Docker dosyaları
+# Docker files
 Dockerfile
 .dockerignore
