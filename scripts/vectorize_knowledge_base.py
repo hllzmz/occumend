@@ -3,12 +3,11 @@ import json
 import chromadb
 from chromadb.utils import embedding_functions
 
-
 # File paths
-ONET_KNOWLEDGE_BASE_FILE_PATH = (
-    pathlib.Path(__file__).parent.resolve() / "data" / "onet_knowledge_base.json"
-)
-
+SCRIPT_DIR = pathlib.Path(__file__).parent.resolve()
+PROJECT_ROOT = SCRIPT_DIR.parent 
+ONET_KNOWLEDGE_BASE_FILE_PATH = PROJECT_ROOT / "data" / "onet_knowledge_base.json"
+CHROMA_DB_PATH = PROJECT_ROOT / "chroma_db"
 
 def vectorize_and_store():
     """
@@ -23,8 +22,7 @@ def vectorize_and_store():
     )
 
     # Persist the database in a folder named 'chroma_db'
-    db_path = "chroma_db"
-    client = chromadb.PersistentClient(path=db_path)
+    client = chromadb.PersistentClient(path=str(CHROMA_DB_PATH))
 
     # Create (or use if exists) a collection named 'onet_data'
     collection_name = "onet_data"
@@ -41,7 +39,7 @@ def vectorize_and_store():
             documents = json.load(f)
     except FileNotFoundError:
         print(f"ERROR: Knowledge base file not found at '{knowledge_base_file}'.")
-        print("Please run 'build_knowledge_base.py' first.")
+        print("Please run 'onet_knowledge_base.py' first.")
         return
 
     # Add data to ChromaDB
@@ -66,7 +64,6 @@ def vectorize_and_store():
         print(
             f"  Processed batch {i//batch_size + 1}/{(len(doc_contents)-1)//batch_size + 1}..."
         )
-
 
 if __name__ == "__main__":
     vectorize_and_store()

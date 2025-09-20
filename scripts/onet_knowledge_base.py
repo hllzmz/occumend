@@ -3,16 +3,13 @@ import json
 import re
 import pathlib
 
-# File paths
-OCCUPATIONS_FILE_PATH = (
-    pathlib.Path(__file__).parent.resolve() / "data" / "occupations.xlsx"
-)
-TASKS_STATEMENTS_FILE_PATH = (
-    pathlib.Path(__file__).parent.resolve() / "data" / "task_statements.xlsx"
-)
-WORK_CONTEXT_FILE_PATH = (
-    pathlib.Path(__file__).parent.resolve() / "data" / "work_context.xlsx"
-)
+# File paths (relative to project root, not script location)
+PROJECT_ROOT = pathlib.Path(__file__).parents[1].resolve()
+DATA_DIR = PROJECT_ROOT / "data"
+
+OCCUPATIONS_FILE_PATH = DATA_DIR / "occupations.xlsx"
+TASKS_STATEMENTS_FILE_PATH = DATA_DIR / "task_statements.xlsx"
+WORK_CONTEXT_FILE_PATH = DATA_DIR / "work_context.xlsx"
 
 datafromdb = pd.read_excel(WORK_CONTEXT_FILE_PATH)
 
@@ -21,7 +18,7 @@ def clean_text(text):
     """Clean special characters (basic) and extra whitespace in the text."""
     if not isinstance(text, str):
         return ""
-    text = re.sub(r"\s+", " ", text)  # Collapse multiple spaces into one
+    text = re.sub(r"\s+", " ", text) 
     return text.strip()
 
 
@@ -92,9 +89,7 @@ def build_knowledge_base():
             }
         )
 
-    output_filename = (
-        pathlib.Path(__file__).parent.resolve() / "data" / "onet_knowledge_base.json"
-    )
+    output_filename = DATA_DIR / "onet_knowledge_base.json"
     with open(output_filename, "w", encoding="utf-8") as f:
         json.dump(knowledge_base, f, indent=2, ensure_ascii=False)
 
