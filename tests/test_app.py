@@ -80,10 +80,9 @@ def test_recommend_endpoint_basic(client):
 
 def test_chat_endpoint_with_code(client):
     """
-    Orijinal /chat fonksiyonunu, hem LLM hem de veritabanı çağrılarını
-    taklit ederek doğru bir şekilde test eder.
+    Tests the original /chat function by mocking both LLM and database calls.
     """
-    # 1. Sahte API ve Veritabanı Cevaplarını Hazırla
+    # Prepare fake API and Database responses
     mock_llm_response_content = "This is the final AI answer."
     mock_llm_response = MagicMock()
     mock_llm_response.choices = [MagicMock()]
@@ -96,33 +95,31 @@ def test_chat_endpoint_with_code(client):
         ]
     }
 
-    # 2. Patch'leri (Taklit Edilecek Nesneleri) Ayarla
-    # Birden fazla nesneyi aynı anda patch'lemek için bu yapı çok kullanışlıdır.
+    # Set up patches (objects to be mocked)
     with patch('app.llm_client') as mock_llm, \
          patch('app.onet_collection') as mock_db:
 
-        # Sahte nesnelerin metodlarının ne döndüreceğini ayarla
+        # Set what the fake objects' methods should return
         mock_llm.chat.completions.create.return_value = mock_llm_response
         mock_db.query.return_value = mock_db_results
 
-        # 3. Orijinal Kodun Beklediği Doğru JSON Verisi ile İstek Gönder
+        # Send request with correct JSON data as expected by the original code
         response = client.post('/chat', json={
             'question': 'Tell me about marketing jobs.',
             'profile_summary': 'R:4.5, I:3.2, A:2.1, S:4.8, E:3.9, C:4.1'
-            # 'history' anahtarı GÖNDERİLMİYOR!
         })
 
-        # 4. Sonuçları Doğrula
+        # Validate results
         response_data = response.get_json()
 
-        # Status kodunu ve hata mesajını kontrol et
-        assert response.status_code == 200, f"Beklenen 200, gelen {response.status_code}. Veri: {response_data}"
+        # Check status code and error message
+        assert response.status_code == 200, f"Expected 200, got {response.status_code}. Data: {response_data}"
 
-        # Dönen cevabın doğru olup olmadığını kontrol et
+        # Check if the returned answer is correct
         assert 'answer' in response_data
         assert response_data['answer'] == mock_llm_response_content
 
-        # Taklit edilen fonksiyonların doğru çağrıldığını kontrol et
+        # Check that the mocked functions were called correctly
         mock_db.query.assert_called_once_with(
             query_texts=['Tell me about marketing jobs.'],
             n_results=5
